@@ -1,9 +1,11 @@
+import 'package:encrypt_shared_preferences/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'splash/view.dart';
 
-void main() {
+Future<void> main() async {
+  await EncryptedSharedPreferencesAsync.initialize("1111111111111111");
   runApp(const MyApp());
 }
 

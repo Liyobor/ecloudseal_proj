@@ -1,4 +1,5 @@
 import 'package:ecloudseal_proj/utils.dart';
+import 'package:encrypt_shared_preferences/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -15,16 +16,24 @@ class LoginLogic extends GetxController {
   // UI state
   final isLoading = false.obs;
   final obscurePassword = true.obs;
+
   final _localAuth = LocalAuthentication();
+
+  // secure storage keys
+  static const _kAccountKey = 'account';
+  static const _kPasswordKey = 'password';
+  static const _kBioEnrolledKey = 'biometric_enrolled';
+  static const _kBioTypesKey = 'biometric_types';
 
   void toggleObscure() {
     obscurePassword.value = !obscurePassword.value;
   }
 
+  // 不強制 Email 格式，僅檢查非空（統一沿用原命名 validateEmail）
   String? validateEmail(String? value) {
+
     final v = (value ?? '').trim();
     if (v.isEmpty) return '請輸入帳號（或 Email）';
-    // 不強制 Email 格式；允許一般帳號或 Email。
     return null;
   }
 
@@ -35,6 +44,9 @@ class LoginLogic extends GetxController {
     return null;
   }
 
+  // 登入：
+  // - 若本機尚無帳密，視為首次登入（註冊）並保存帳密。
+  // - 若已有帳密，驗證輸入與保存是否一致。
   Future<bool> login() async {
     final form = formKey.currentState;
     if (form == null) return false;
@@ -42,14 +54,32 @@ class LoginLogic extends GetxController {
 
     isLoading.value = true;
     try {
-      // 此專案不包含後端功能,直接回傳true讓用戶登入即可
-      await Future.delayed(const Duration(milliseconds: 800));
-      return true;
+
+      final prefs = EncryptedSharedPreferencesAsync.getInstance();
+      final savedAccount = await prefs.getString(_kAccountKey);
+      final savedPassword = await prefs.getString(_kPasswordKey);
+
+      final inputAccount = accountController.text.trim();
+      final inputPassword = passwordController.text.trim();
+
+      if (savedAccount == null || savedPassword == null) {
+        await prefs.setString(_kAccountKey, inputAccount);
+        await prefs.setString(_kPasswordKey, inputPassword);
+        return true; // 首次：儲存後進行生物辨識
+      }
+
+      if (savedAccount != inputAccount || savedPassword != inputPassword) {
+        Get.snackbar('登入失敗', '帳號或密碼不正確');
+        return false;
+      }
+
+      return true; // 帳密正確，進行生物辨識
     } finally {
       isLoading.value = false;
     }
   }
 
+  // 生物辨識並保存結果（成功則紀錄啟用與可用類型）
   Future<bool> authenticateBiometrics() async {
     try {
       final supported = await _localAuth.isDeviceSupported();
@@ -67,6 +97,18 @@ class LoginLogic extends GetxController {
           useErrorDialogs: true,
         ),
       );
+
+      if (didAuthenticate) {
+        try {
+          final prefs = EncryptedSharedPreferences.getInstance();
+          final types = await _localAuth.getAvailableBiometrics();
+          await prefs.setBool(_kBioEnrolledKey, true);
+          await prefs.setString(_kBioTypesKey, types.map((e) => e.name).join(','));
+        } catch (e) {
+          customDebugPrint('store biometric info error: $e');
+        }
+      }
+
       return didAuthenticate;
     } on PlatformException catch (e) {
       Get.snackbar('驗證失敗', e.message ?? '無法啟動生物辨識');
@@ -82,3 +124,4 @@ class LoginLogic extends GetxController {
     super.onClose();
   }
 }
+
