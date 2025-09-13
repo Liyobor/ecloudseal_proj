@@ -1,5 +1,8 @@
+import 'package:ecloudseal_proj/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
 
 class LoginLogic extends GetxController {
   // Form state
@@ -12,6 +15,7 @@ class LoginLogic extends GetxController {
   // UI state
   final isLoading = false.obs;
   final obscurePassword = true.obs;
+  final _localAuth = LocalAuthentication();
 
   void toggleObscure() {
     obscurePassword.value = !obscurePassword.value;
@@ -43,6 +47,31 @@ class LoginLogic extends GetxController {
       return true;
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<bool> authenticateBiometrics() async {
+    try {
+      final supported = await _localAuth.isDeviceSupported();
+      final canCheck = await _localAuth.canCheckBiometrics;
+      if (!supported || !canCheck) {
+        Get.snackbar('無法生物辨識', '此裝置未啟用或不支援生物辨識');
+        return false;
+      }
+
+      final didAuthenticate = await _localAuth.authenticate(
+        localizedReason: '請以 Face ID 或指紋確認身份',
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+          useErrorDialogs: true,
+        ),
+      );
+      return didAuthenticate;
+    } on PlatformException catch (e) {
+      Get.snackbar('驗證失敗', e.message ?? '無法啟動生物辨識');
+      customDebugPrint("error : ${e.message}");
+      return false;
     }
   }
 

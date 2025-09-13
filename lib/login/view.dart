@@ -37,7 +37,10 @@ class LoginPage extends StatelessWidget {
                   LoginForm(
                     onSubmit: () async {
                       final ok = await logic.login();
-                      if (ok) {
+                      if (!ok) return;
+
+                      final bioOk = await logic.authenticateBiometrics();
+                      if (bioOk) {
                         Get.offAll(HomePage());
                       }
                     },
@@ -51,4 +54,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
