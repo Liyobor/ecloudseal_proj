@@ -6,8 +6,6 @@ import 'splash/view.dart';
 
 const kAccountKey = 'account';
 const kPasswordKey = 'password';
-const kBioEnrolledKey = 'biometric_enrolled';
-const kBioTypesKey = 'biometric_types';
 const kFailedCountKey = 'failed_count';
 
 

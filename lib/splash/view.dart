@@ -13,6 +13,7 @@ class SplashPage extends StatelessWidget {
 
   @override
   StatelessElement createElement() {
+    // 將頁面導向 LoginPage
     WidgetsBinding.instance.addPostFrameCallback((_){
       Get.off(()=>LoginPage());
     });

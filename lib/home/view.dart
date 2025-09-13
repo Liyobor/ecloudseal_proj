@@ -1,7 +1,5 @@
-import 'package:encrypt_shared_preferences/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ecloudseal_proj/login/view.dart';
 
 import 'logic.dart';
 

@@ -1,6 +1,6 @@
 import 'package:ecloudseal_proj/mixin_on_getx_controller/authenticate_mixin.dart';
-import 'package:ecloudseal_proj/utils.dart';
 import 'package:get/get.dart';
+
 
 class LoginLogic extends GetxController with AuthenticateMixin {
 
@@ -19,11 +19,4 @@ class LoginLogic extends GetxController with AuthenticateMixin {
     isLoading(false);
     return res;
   }
-
-  @override
-  void onClose() {
-    customDebugPrint("onclose");
-    super.onClose();
-  }
-
 }

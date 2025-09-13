@@ -88,7 +88,7 @@ mixin AuthenticateMixin on GetxController {
       final prefs = EncryptedSharedPreferencesAsync.getInstance();
       final savedAccount = await prefs.getString(kAccountKey);
       final savedPassword = await prefs.getString(kPasswordKey);
-      customDebugPrint('savedPassword : $savedPassword');
+      // customDebugPrint('savedPassword : $savedPassword');
       final inputAccount = accountController.text.trim();
       final inputPassword = passwordController.text.trim();
 
@@ -123,7 +123,7 @@ mixin AuthenticateMixin on GetxController {
         return false;
       }
 
-      final didAuthenticate = await _localAuth.authenticate(
+      return await _localAuth.authenticate(
         localizedReason: '請以 Face ID 或指紋確認身份',
         options: const AuthenticationOptions(
           biometricOnly: true,
@@ -131,19 +131,6 @@ mixin AuthenticateMixin on GetxController {
           useErrorDialogs: true,
         ),
       );
-
-      if (didAuthenticate) {
-        try {
-          final prefs = EncryptedSharedPreferences.getInstance();
-          final types = await _localAuth.getAvailableBiometrics();
-          await prefs.setBool(kBioEnrolledKey, true);
-          await prefs.setString(kBioTypesKey, types.map((e) => e.name).join(','));
-        } catch (e) {
-          customDebugPrint('store biometric info error: $e');
-        }
-      }
-
-      return didAuthenticate;
     } on PlatformException catch (e) {
       Get.snackbar('驗證失敗', e.message ?? '無法啟動生物辨識');
       customDebugPrint("error : ${e.message}");
