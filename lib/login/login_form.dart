@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'logic.dart';
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({super.key, required this.onSubmit});
+  LoginForm({super.key, required this.onSubmit});
 
   final Future<void> Function() onSubmit;
+  final logic = Get.find<LoginLogic>();
 
   @override
   Widget build(BuildContext context) {
-    final logic = Get.find<LoginLogic>();
+
 
     return Form(
       key: logic.formKey,
@@ -25,7 +26,7 @@ class LoginForm extends StatelessWidget {
               hintText: 'username 或 email',
               prefixIcon: Icon(Icons.person_outline),
             ),
-            validator: logic.validateEmail,
+            validator: logic.validateAccount,
             autofillHints: const [AutofillHints.username, AutofillHints.email],
             textInputAction: TextInputAction.next,
           ),
@@ -64,10 +65,10 @@ class LoginForm extends StatelessWidget {
           const SizedBox(height: 8),
           Obx(
             () => FilledButton(
-              onPressed: Get.find<LoginLogic>().isLoading.value
+              onPressed: logic.isLoading.value
                   ? null
                   : () => _submit(onSubmit),
-              child: Get.find<LoginLogic>().isLoading.value
+              child: logic.isLoading.value
                   ? const SizedBox(
                       width: 18,
                       height: 18,

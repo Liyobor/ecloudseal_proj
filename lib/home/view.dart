@@ -18,14 +18,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             tooltip: '登出',
             icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final prefs = EncryptedSharedPreferencesAsync.getInstance();
-              await prefs.remove('account');
-              await prefs.remove('password');
-              await prefs.remove('biometric_enrolled');
-              await prefs.remove('biometric_types');
-              Get.offAll(LoginPage());
-            },
+            onPressed: () => logic.logout(),
           ),
         ],
       ),

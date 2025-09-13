@@ -14,7 +14,7 @@ class SplashPage extends StatelessWidget {
   @override
   StatelessElement createElement() {
     WidgetsBinding.instance.addPostFrameCallback((_){
-      Get.off(LoginPage());
+      Get.off(()=>LoginPage());
     });
     return super.createElement();
   }

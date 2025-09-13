@@ -4,7 +4,15 @@ import 'package:get/get.dart';
 
 import 'splash/view.dart';
 
+const kAccountKey = 'account';
+const kPasswordKey = 'password';
+const kBioEnrolledKey = 'biometric_enrolled';
+const kBioTypesKey = 'biometric_types';
+const kFailedCountKey = 'failed_count';
+
+
 Future<void> main() async {
+  // 暫時使用16個1的字串當key 之後可以更換
   await EncryptedSharedPreferencesAsync.initialize("1111111111111111");
   runApp(const MyApp());
 }

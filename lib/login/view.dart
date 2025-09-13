@@ -23,6 +23,35 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 24),
+                  Obx(
+                    () => Visibility(
+                      visible: logic.isLocked,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.redAccent),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_outline, color: Colors.redAccent),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '應用已經鎖定',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(color: Colors.redAccent),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   Text(
                     '歡迎回來',
                     style: Theme.of(context).textTheme.headlineMedium,
@@ -41,7 +70,7 @@ class LoginPage extends StatelessWidget {
 
                       final bioOk = await logic.authenticateBiometrics();
                       if (bioOk) {
-                        Get.offAll(HomePage());
+                        Get.offAll(()=>HomePage());
                       }
                     },
                   ),
