@@ -2,7 +2,7 @@
 
 雲璽科技面試題目。
 
-## 要求
+## 主旨
 
 設計一個具備雙因子驗證（Multi-Factor Authentication, MFA）的登入機制：
 
@@ -11,7 +11,7 @@
 
 此系統模擬企業內部應用登入需求，要求兼顧安全性與使用者體驗。
 
-## 要求
+## 開發要求
 
 1. 登入頁面輸入「帳號」與「密碼」
 2. 使用 EncryptedSharedPreferences / Keystore 儲存並讀取帳號密碼資訊
@@ -21,7 +21,7 @@
 6. 生物辨識驗證失敗時應有錯誤提示並返回登入畫面
 
 
-## 此App運作方式
+## 運作方式
 
 由 main.dart 入口進入 SplashPage -> SplashPage 會將頁面導向登入頁面(LoginPage) 
 
